@@ -1,0 +1,22 @@
+# @package _group_
+
+defaults:
+    - task: null
+    - model: null
+
+hydra:
+  run:
+    dir: ${common_eval.results_path}/${dataset.gen_subset}
+
+common_eval:
+  results_path: null
+  path: null
+  post_process: letter
+dataset:
+  max_tokens: 200000
+  required_batch_size_multiple: 1
+distributed_training:
+  distributed_world_size: 1
+decoding:
+  beam: 1
+  type: viterbi

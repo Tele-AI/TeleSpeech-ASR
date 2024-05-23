@@ -1,0 +1,23 @@
+reader_conf:
+    model_type: d2v2
+    model_dir: /path/to/data2vec2/large.pt
+    user_dir: /path/to/data2vec_dialect
+    finetune_model: false  # whether model in model_dir is finetuned or pretrained
+    normalize_before: true
+    multilayer_feature: true  # whether to use one layer of multi-layer representation
+    num_layer: 17  # layer + 1 for pretrain model. base: 12layers, large: 16layers
+    layer: [-1]  # 0 for the first layer, -1 for the last layer or all layer
+    padding_mask: true
+    down_sample_rate: 4
+    # max_chunk: 5000  # if OOM, uncomment this
+    # weights: [-1.5091, -1.6109, -1.2026, -0.5829, -0.3483, -0.3567, -0.3603, -0.2077, 0.2777, 0.5658, 0.8009, 0.4152, -1.0612, -2.2332, -2.6222, 0.9683, 0.9683]  # weights for usage of multi-layer representation
+
+kmeans_conf:
+    n_clusters: 2000
+    init: k-means++
+    max_iter: 100
+    batch_size: 10000
+    tol: 0.0
+    max_no_improvement: 100
+    n_init: 20
+    reassignment_ratio: 0.0

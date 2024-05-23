@@ -1,0 +1,70 @@
+# @package _group_
+
+common:
+  fp16: true
+  log_format: json
+  log_interval: 200
+  tensorboard_logdir: tb
+  min_loss_scale: 1e-6
+
+checkpoint:
+  save_interval_updates: 1000
+  keep_interval_updates: 1
+  no_epoch_checkpoints: true
+  best_checkpoint_metric: uer
+
+task:
+  _name: spec_finetuning
+  data: ???
+  min_sample_size: 100
+  max_sample_size: 4000
+  normalize: true
+  #target_dictionary: /path/to/dict
+  labels: ltr
+
+dataset:
+  num_workers: 6
+  max_tokens: 200000
+  skip_invalid_size_inputs_valid_test: true
+  validate_after_updates: 2500
+  validate_interval_updates: 1000
+  train_subset: train
+  valid_subset: dev
+
+distributed_training:
+  ddp_backend: legacy_ddp
+  find_unused_parameters: true
+  distributed_world_size: 1
+
+criterion:
+  _name: ctc
+  zero_infinity: true
+
+optimization:
+  max_update: 20000
+  lr: [0.00002]
+  sentence_avg: true
+  update_freq: [8]
+
+optimizer:
+  _name: adam
+  adam_betas: (0.9,0.98)
+  adam_eps: 1e-08
+
+lr_scheduler:
+  _name: tri_stage
+  phase_ratio: [0.1, 0.4, 0.5]
+  final_lr_scale: 0.05
+
+model:
+  _name: wav2vec_ctc
+  w2v_path: ???
+  apply_mask: true
+  mask_prob: 0.5 #0.75
+  mask_length: 3
+  mask_channel_prob: 0.5
+  mask_channel_length: 64
+  layerdrop: 0.1
+  activation_dropout: 0.1
+  feature_grad_mult: 0.0
+  freeze_finetune_updates: 2500

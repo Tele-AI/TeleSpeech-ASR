@@ -1,0 +1,102 @@
+# network architecture
+
+# pretrained model related
+freeze_param: [
+    "feat_extractor.model"
+]
+
+frontend_conf:
+    feat_extractor_type: d2v2
+    output_dim: 1024
+    feat_extractor_conf:
+        model_dir: /home/large.pt
+        user_dir: /path/to/data2vec_dialect
+        finetune_model: false
+        padding_mask: true
+        multilayer_feature: true
+        layer: [-1]  # 0 for the first layer, -1 for the last layer or all layer. base: 12layers, large: 16layers
+        down_sample: 4  # 2 for 20ms, 4 for 40 ms, 320 for raw wav
+        num_layer: 17  # layer + 1 for pretrain model
+            
+preencoder_conf:
+    input_size: 1024  # equal to output_dim in frontend_conf
+    output_size: 80
+    dropout_rate: 0.3
+
+spec_aug_after_conf:
+    scale: true
+    num_t_mask: 2
+    num_f_mask: 2
+    max_t: 50
+    max_f: 10
+    
+# encoder related
+encoder: conformer
+encoder_conf:
+    output_size: 256    # dimension of attention
+    attention_heads: 4
+    linear_units: 2048  # the number of units of position-wise feed forward
+    num_blocks: 12
+    dropout_rate: 0.1
+    positional_dropout_rate: 0.1
+    attention_dropout_rate: 0.0
+    input_layer: linear  # added conv2d2 for subsample
+    normalize_before: true
+    cnn_module_kernel: 15
+    use_cnn_module: True
+    activation_type: 'swish'
+    pos_enc_layer_type: 'rel_pos'
+    selfattention_layer_type: 'rel_selfattn'
+
+
+# decoder related
+decoder: transformer
+decoder_conf:
+    attention_heads: 4
+    linear_units: 2048
+    num_blocks: 6
+    dropout_rate: 0.1
+    positional_dropout_rate: 0.1
+    self_attention_dropout_rate: 0.0
+    src_attention_dropout_rate: 0.0
+
+# hybrid CTC/attention
+model_conf:
+    ctc_weight: 1.0
+    lsm_weight: 0.1     # label smoothing option
+    length_normalized_loss: false
+
+dataset_conf:
+    cmvn: true
+    filter_conf:
+        max_length: 20000
+        min_length: 0
+        token_max_length: 200
+        token_min_length: 1
+        min_output_input_ratio: 0.002  # 0.002 for 40ms, 0.001 for 20ms
+        max_output_input_ratio: 0.25  # 0.25 for 40ms, 0.5 for 20ms
+    speed_perturb: false
+    feats_type: raw
+    spec_aug: false
+    shuffle: true
+    shuffle_conf:
+        shuffle_size: 1500
+    sort: true
+    sort_conf:
+        sort_size: 500  # sort_size should be less than shuffle_size
+    batch_conf:
+        batch_type: 'static' # static or dynamic
+        batch_size: 8
+
+grad_clip: 5
+accum_grad: 4
+max_epoch: 50
+log_interval: 100
+
+optim: adam
+optim_conf:
+    lr: 0.0002
+    
+scheduler: warmuplr     # pytorch v1.1.0+ required
+scheduler_conf:
+    warmup_steps: 25000
