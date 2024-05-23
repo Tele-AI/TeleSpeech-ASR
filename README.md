@@ -5,7 +5,7 @@
 </div>
 
 <p align="center">
-🤗 <a href="https://huggingface.co/Tele-AI/TeleSpeech-ASR1.0" target="_blank">Hugging Face</a>
+🤗 <a href="https://huggingface.co/Tele-AI/TeleSpeech-ASR1.0" target="_blank">Hugging Face</a> • 🐾 <a href="https://gitee.com/Tele-AI/TeleSpeech-ASR" target="_blank">gitee</a>️
 </p>
 
 # 目录
