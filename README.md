@@ -33,11 +33,13 @@
 
 本次发布版本和下载链接见下表
 
-| 模型版本             | 参数量  | 下载链接     |
-|---------------------|-------|---------------------|
-| pretrain_base | 0.09 B | [TeleSpeech-ASR1.0-base](https://huggingface.co/Tele-AI/TeleSpeech-ASR1.0/blob/main/base.pt)  |
-| pretrain_large | 0.3 B | [TeleSpeech-ASR1.0-large](https://huggingface.co/Tele-AI/TeleSpeech-ASR1.0/blob/main/large.pt)  |
+| 模型版本             | 参数量  | 下载链接     | 字典  |
+|---------------------|-------|---------------------|-------|
+| pretrain_base | 0.09 B | [TeleSpeech-ASR1.0-base](https://huggingface.co/Tele-AI/TeleSpeech-ASR1.0/blob/main/base.pt)  | ✗ |
+| pretrain_large | 0.3 B | [TeleSpeech-ASR1.0-large](https://huggingface.co/Tele-AI/TeleSpeech-ASR1.0/blob/main/large.pt)  | ✗ |
+| finetune_large_kespeech | 0.3 B | [TeleSpeech-ASR1.0-large-kespeech](https://huggingface.co/Tele-AI/TeleSpeech-ASR1.0/blob/main/finetune_large_kespeech.pt) | [dict.char7531.txt](https://huggingface.co/Tele-AI/TeleSpeech-ASR1.0/blob/main/dict.chr7531.txt) |
 
+finetune模型为已经微调过的模型，可直接使用；pretrain模型为无监督预训练模型，我们提供了两种有监督训练框架，用于下游ASR任务：基于fairseq的微调、基于wenet的表征提取训练ASR模型
 
 # 环境配置
 环境依赖
@@ -158,6 +160,11 @@ utt:X0000000001_100849618_S00006	feat:/data/raw_nnaudio.test.1.ark:2984296665	fe
 | pretrain_large | 4.0 | 14.3 / 13.0 | 19.1  | 8.1 |
 
 *WenetSpeech中的结果为分别使用 `train_s/train_m`训练后，在Test_Meeting上的CER
+
+KeSpeech各方言上结果
+|  模型版本 | 普通话 | 北京 | 西南 | 中原 | 东北 | 兰银 | 江淮 | 冀鲁 | 胶辽 |
+| ---------| ------ | ---- | ---- | ---- |---- | ---- | ---- | ---- | ---- |
+| pretrain_large | 4.61 | 8.23 | 8.74 | 7.62 | 7.89 | 9.72 | 12.89 | 8.91 | 9.30 |
 
 # 声明与协议
 ## 声明
