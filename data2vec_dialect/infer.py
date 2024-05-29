@@ -501,6 +501,7 @@ def cli_main() -> None:
     except ImportError:
         logger.warning("Failed to get config name from hydra args")
         cfg_name = "infer"
+        raise ImportError
 
     cs = ConfigStore.instance()
     cs.store(name=cfg_name, node=InferConfig)
