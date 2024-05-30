@@ -4,7 +4,6 @@ sentencepiece
 tensorboard
 tensorboardX
 textgrid
-pytest
 flake8==3.8.2
 flake8-bugbear
 flake8-comprehensions

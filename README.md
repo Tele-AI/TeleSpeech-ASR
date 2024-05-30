@@ -63,7 +63,7 @@ $ pip install -r requirements.txt
 
 * 若只需要fairseq进行微调、解码，可以不安装完整的requirements.txt，只需保证kaldiio, timm, editdistance, soundfile已正确安装
 ```shell script
-$ pip install kaldiio, timm, editdistance, soundfile
+$ pip install kaldiio timm editdistance soundfile
 ```
 
 
@@ -71,7 +71,7 @@ $ pip install kaldiio, timm, editdistance, soundfile
 ## 特征提取
 <a id="特征提取"></a>
 
-* 模型输入为16K音频40维mfcc特征，**非原始音频**
+* 模型输入为从16K采样率音频中提取的40维mfcc特征，**非原始音频**
 * 利用kaldi提取40维mfcc特征，运行脚本参考`prepare_kaldi_feats.sh`
   * 可将运行脚本`prepare_kaldi_feats.sh`与参数设置`mfcc_hires.conf`置于kaldi任一egs目录下（与cmd.sh等脚本平级，例如/path/to/kaldi/egs/aishell/s5/prepare_kaldi_feats.sh），运行`prepare_kaldi_feats.sh`即可
 * 为各数据集准备训练用文件`data.list`，可参考`make_datalist.py`，以`\t`分隔：
