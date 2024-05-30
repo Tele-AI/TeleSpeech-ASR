@@ -5,23 +5,21 @@
 </div>
 
 <p align="center">
-🤗 <a href="https://huggingface.co/Tele-AI/TeleSpeech-ASR1.0" target="_blank">Hugging Face</a> • 🐾 <a href="https://gitee.com/Tele-AI/TeleSpeech-ASR" target="_blank">gitee</a>️
+🤗 <a href="https://huggingface.co/Tele-AI/TeleSpeech-ASR1.0" target="_blank">Hugging Face</a>️ • 🤖 <a href="https://www.modelscope.cn/models/TeleAI/TeleSpeech-ASR1.0/summary" target="_blank">ModelScope</a> • 🐾 <a href="https://gitee.com/Tele-AI/TeleSpeech-ASR" target="_blank">gitee</a>
 </p>
 
 # 目录
 - [目录](#目录)
 - [模型开源](#模型开源)
 - [环境配置](#环境配置)
-  - [预训练模型微调](#预训练模型微调)
-  - [表征训练下游任务](#表征训练下游任务)
 - [数据准备](#数据准备)
   - [特征提取](#特征提取)
   - [字典准备](#字典准备)
 - [微调模型推理流程示例\*](#微调模型推理流程示例)
-- [预训练模型微调](#预训练模型微调-1)
+- [预训练模型微调](#预训练模型微调)
   - [微调阶段](#微调阶段)
   - [推理与解码阶段](#推理与解码阶段)
-- [表征训练下游任务](#表征训练下游任务-1)
+- [表征训练下游任务](#表征训练下游任务)
 - [开源数据集结果](#开源数据集结果)
 - [声明与协议](#声明与协议)
   - [声明](#声明)
@@ -44,13 +42,11 @@
 * pretrain模型为无监督预训练模型，**无法直接进行ASR任务**，需要用少量标注数据进行有监督训练后使用。相比于直接训练的方言识别模型，基于预训练模型可以利用更少的有标注数据获得更好的方言识别性能。我们提供了两种有监督训练框架，用于下游ASR任务：1) 基于fairseq的预训练模型微调； 2) 基于wenet的表征提取（特征提取器）训练下游ASR模型
 
 # 环境配置
-环境依赖
+
 * PyTorch version >= 1.13.0
 * Python version >= 3.8
 * 数据准备、程序训练需要使用kaldi，请确保已正确安装：https://github.com/kaldi-asr/kaldi
   * 若已有提好的特征，程序运行时可以使用wenet开源框架中kaldi_io.py实现的方法替换kaldiio.load_mat，从而无需安装kaldi
-
-## 预训练模型微调
 
 <a id="fairseq安装"></a>
 * 安装fairseq及其依赖
@@ -60,26 +56,22 @@ $ cd fairseq
 $ pip install --editable ./
 ```
 
-* 安装kaldiio
+* 安装fairseq额外依赖以及wenet表征训练任务运行所需依赖
 ```shell script
-$ pip install kaldiio
-```
-
-## 表征训练下游任务
-
-* 确保fairseq已正确[安装](#fairseq安装)
-
-* 安装表征训练任务运行所需依赖
-```shell script
-$ cd wenet_representation
 $ pip install -r requirements.txt
 ```
+
+* 若只需要fairseq进行微调、解码，可以不安装完整的requirements.txt，只需保证kaldiio, timm, editdistance, soundfile已正确安装
+```shell script
+$ pip install kaldiio, timm, editdistance, soundfile
+```
+
 
 # 数据准备
 ## 特征提取
 <a id="特征提取"></a>
 
-* 模型输入为40维mfcc特征，**非原始音频**
+* 模型输入为16K音频40维mfcc特征，**非原始音频**
 * 利用kaldi提取40维mfcc特征，运行脚本参考`prepare_kaldi_feats.sh`
   * 可将运行脚本`prepare_kaldi_feats.sh`与参数设置`mfcc_hires.conf`置于kaldi任一egs目录下（与cmd.sh等脚本平级，例如/path/to/kaldi/egs/aishell/s5/prepare_kaldi_feats.sh），运行`prepare_kaldi_feats.sh`即可
 * 为各数据集准备训练用文件`data.list`，可参考`make_datalist.py`，以`\t`分隔：
@@ -112,8 +104,8 @@ utt:X0000000001_100849618_S00006	feat:/data/raw_nnaudio.test.1.ark:2984296665	fe
 # 微调模型推理流程示例*
 1. [fairseq环境准备](#fairseq安装)，修改`data2vec_dialect/path.sh`文件中`/path/to/fairseq`为fairseq安装路径
 2. 利用kaldi提取音频特征，并保存为以 .tsv 结尾的文件，格式参考[特征提取](#特征提取)
-3. 进入data2vec_dialect目录，并修改`run_scripts/decode.sh`文件中`/path/to`相关路径为本地存储路径
-4. 执行`run_scripts/decode.sh`
+3. 进入data2vec_dialect目录，并修改`run_scripts/decode.sh`文件，参考[推理与解码阶段](#推理与解码阶段)
+4. 在data2vec_dialect路径下，执行`run_scripts/decode.sh`
 
 *仅经过微调后的finetune模型支持直接推理，无监督预训练模型`pretrain_base`和`pretrain_large`需要先在标注数据上训练后，再进行推理，详见[预训练模型微调](#预训练模型微调)或[表征训练下游任务](#表征训练下游任务)
 
@@ -126,13 +118,15 @@ utt:X0000000001_100849618_S00006	feat:/data/raw_nnaudio.test.1.ark:2984296665	fe
     $ ln -s /path/to/train/data.list /path/to/train/train.tsv
     $ ln -s /path/to/dev/data.list /path/to/train/dev.tsv
     ```
-* 进入data2vec_dialect路径，修改`path.sh`文件中`/path/to/fairseq`为fairseq安装路径
+* 进入data2vec_dialect目录，修改`path.sh`文件中`/path/to/fairseq`为fairseq安装路径
 * 将`run_scripts/run_d2v_finetune.sh`中`/path/to`相关路径替换
 * 修改`task.data`为 .tsv 文件保存路径，如`task.data=/data/wenetspeech/train`
-* 执行
+* 在data2vec_dialect路径下，执行
     ```shell script
     $ bash run_scripts/run_d2v_finetune.sh
     ```
+
+<a id="推理与解码阶段"></a>
 
 ## 推理与解码阶段
 * 同样修改`run_scripts/decode.sh`中的模型路径、测试数据路径等
