@@ -103,7 +103,8 @@ utt:X0000000001_100849618_S00006	feat:/data/raw_nnaudio.test.1.ark:2984296665	fe
 
 # 微调模型推理流程示例*
 1. [fairseq环境准备](#fairseq安装)，修改`data2vec_dialect/path.sh`文件中`/path/to/fairseq`为fairseq安装路径
-2. 利用kaldi提取音频特征，并保存为以 .tsv 结尾的文件，格式参考[特征提取](#特征提取)
+2. 利用kaldi提取音频特征，准备data.list格式文件，参考[特征提取](#特征提取)，并命名为以 .tsv 结尾的文件
+   * data.list中`text`、`token`是为了微调和统计CER使用，若只想拿到解码结果，data.list中的`text`、`token`只需保证有内容即可 
 3. 进入data2vec_dialect目录，并修改`run_scripts/decode.sh`文件，参考[推理与解码阶段](#推理与解码阶段)
 4. 在data2vec_dialect路径下，执行`run_scripts/decode.sh`
 

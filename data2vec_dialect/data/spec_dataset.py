@@ -281,6 +281,7 @@ class FileAudioDataset(RawAudioDataset):
             for i, line in enumerate(f):
                 items = REGEX_SPLIT.split(line.strip())
                 if len(items) != 7:
+                    skipped += 1
                     self.skipped_indices.add(i)
                     continue
                 # [T,C]
@@ -297,6 +298,7 @@ class FileAudioDataset(RawAudioDataset):
                 sizes.append(sz)
 
         logger.info(f"loaded {len(self.fnames)}, skipped {skipped} samples")
+        logger.info(f"ATTENTION!!! skip indices: {self.skipped_indices}")
 
         self.sizes = np.array(sizes, dtype=np.int64)
 

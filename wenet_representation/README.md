@@ -1,7 +1,7 @@
 # 表征训练下游任务
 
 ## 框架简介
-* 框架基于wenet搭建，支持从预训练模型提取提取中间层表征，作为ASR模型的特征输入，或生成离散单元作为离散ASR模型的输入进行训练
+* 框架基于wenet搭建，支持从预训练模型提取中间层表征，作为ASR模型的特征输入，或生成离散单元作为离散ASR模型的输入进行训练
 * 支持ASR模型/解码方式：Conformer、Transformer以及对应的ctc_greedy_search、attention、attention_rescore等方式
 * 表征训练方法与ASR模型解耦，可添加其他下游ASR模型如Paraformer、Branchformer等
 
@@ -10,7 +10,7 @@
 ### 连续表征训练相关
 * conf/train_d2v2_ark_conformer.yaml
   * frontend_conf：预训练模型相关
-    * finetune_model: 设为true则表示moder_dir中的模型为经过finetune后的模型
+    * finetune_model: 设为true则表示moder_dir中的模型为经过finetune后的模型，false则使用无监督预训练模型
     * multilayer_feature：选择是否使用多层表征加权计算，与layer设置共同使用
     * layer：从0开始选择使用指定层表征计算，与multilayer_feature配合共4种：(1) 若为[-1]，且multilayer_feature=true，使用全部层的加权和；(2) 若为[-1]，且multilayer_feature=false，只使用最后一层的表征；(3) 若layer为指定数值，且multilayer_feature=true，则只在指定几层表征上计算加权和；(4) 若layer为指定数值，且multilayer_feature=false，则对指定层层表征求平均值
     * num_layer：模型整体层数，预训练模型为层数+1，finetune模型为层数
